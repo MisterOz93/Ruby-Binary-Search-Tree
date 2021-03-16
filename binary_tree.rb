@@ -67,7 +67,7 @@ class Tree < Node
         build_tree(right_array, node.right_child) if right_array
         
         
-        #puts node.to_s 
+       # puts node.to_s 
         node
     end
 
@@ -86,7 +86,7 @@ class Tree < Node
         end
     end
 
-    def find(value, root = self.build_tree) # accepts a value and returns the node with the given value.
+    def find(value, root = self.build_tree)
         if root.read == value 
             
             puts "#{root} contains #{value}"
@@ -100,7 +100,21 @@ class Tree < Node
 
     end
 
-    def level_order
+    def level_order(root = @base_root) 
+        #should return [6,3,9,2,5,8,10,1,4,7].
+        return if root.nil? 
+        @queue = [root] unless @queue
+        @bfs = [] unless @bfs
+        unless @queue.empty?
+        @bfs << root.read
+        @queue << root.left_child if root.left_child
+        @queue << root.right_child if root.right_child
+        @queue = @queue[1...@queue.length]
+        self.level_order(@queue[0])
+        end
+       
+       @bfs
+
     end
 
     def inorder
@@ -127,5 +141,6 @@ class Tree < Node
 
 end
 
-tree = Tree.new([1,2,3,4,5,6,7,8,9])
-tree.find(9)
+tree = Tree.new([1,2,3,4,5,6,7,8,9,10])
+tree.build_tree
+print tree.level_order
