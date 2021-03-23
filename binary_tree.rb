@@ -117,14 +117,23 @@ class Tree < Node
             node.delete
             return
        elsif node.number_of_children == 1 && node.left_child
-            #i need the node's left child to take its place.
-            node.parent.set_left_child(node.left_child)
-            node.delete
-          
+            if node.parent.left_child == node
+                node.parent.set_left_child(node.left_child)
+            elsif node.parent.right_child == node
+                node.parent.set_right_child(node.left_child)
+            end
+            node.delete   
        elsif node.number_of_children == 1 && node.right_child
-            node.parent.set_right_child(node.right_child)
+            if node.parent.left_child == node
+                node.parent.set_left_child(node.right_child)
+            elsif node.parent.right_child == node
+                node.parent.set_right_child(node.right_child)
+            end
             node.delete    
        else #node has two children
+            #find the smallest number in the right sub tree of the node (the inorder successor)
+            #replace the data in node with the data of the inorder successor
+            #delete the inorder successor
        end
     end
 
@@ -294,7 +303,7 @@ tree = Tree.new([1,2,3,4,5,6,7,8,9,10])
 tree.build_tree
 #print tree.find(3)
 tree.delete(2)
-print tree.find(3)  #should return data: 3, lc: 1, rc: 5 after i properly delete 2
+#print tree.find(3)  #should return data: 3, lc: 1, rc: 5 after i properly delete 2
 #print tree.inorder
 #print tree.postorder
 #print tree.preorder
