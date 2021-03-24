@@ -1,11 +1,11 @@
 
 module Comparison
     def compare(x,y)
-        x > y ? 1 : 0  
+        x > y ? x : y  
     end 
 end
 
-#delete works on leaf. continue on line 119 using parent method to point.
+#use tree sketch to test delete on single child and 2 child nodes.
 
 class Node
     include Comparison
@@ -18,6 +18,9 @@ class Node
     end
     def read
         @data
+    end
+    def set_data(value)
+        @data = value
     end
     def left_child
         @left_child
@@ -134,7 +137,14 @@ class Tree < Node
             #find the smallest number in the right sub tree of the node (the inorder successor)
             #replace the data in node with the data of the inorder successor
             #delete the inorder successor
-       end
+            replacement = node.right_child
+            while replacement.left_child
+                replacement = replacement.left_child 
+            end
+                node.set_data(replacement.read)
+                replacement.delete
+        end
+
     end
 
     def find(value, node = @base_root)
@@ -294,6 +304,11 @@ class Tree < Node
 end
 
     def rebalance #rebalance if the tree is unbalanced. read every node into a new array, then build new tree
+        unless self.balanced?
+            @inorder_list = []
+            self.inorder
+            self.build_tree(@inorder_list)
+        end
     end
 
 
@@ -302,7 +317,7 @@ end
 tree = Tree.new([1,2,3,4,5,6,7,8,9,10])
 tree.build_tree
 #print tree.find(3)
-tree.delete(2)
+#tree.delete(2)
 #print tree.find(3)  #should return data: 3, lc: 1, rc: 5 after i properly delete 2
 #print tree.inorder
 #print tree.postorder
