@@ -1,14 +1,4 @@
-
-module Comparison
-    def compare(x,y)
-        x > y ? x : y  
-    end 
-end
-
-#use tree sketch to test delete on single child and 2 child nodes.
-
 class Node
-    include Comparison
 
     def initialize(data,lc = nil,rc = nil)
         @data = data
@@ -68,7 +58,7 @@ class Tree < Node
 
         arr.sort!.uniq!
         if arr.length == 1 
-           # puts node.to_s
+            #puts node.to_s
             return
         end 
         
@@ -133,10 +123,7 @@ class Tree < Node
                 node.parent.set_right_child(node.right_child)
             end
             node.delete    
-       else #node has two children
-            #find the smallest number in the right sub tree of the node (the inorder successor)
-            #replace the data in node with the data of the inorder successor
-            #delete the inorder successor
+       else 
             replacement = node.right_child
             while replacement.left_child
                 replacement = replacement.left_child 
@@ -152,7 +139,7 @@ class Tree < Node
             puts "Could not find #{value}"
             return
         end
-    
+        if value
         if node.read == value 
             return node
         elsif node.read > value
@@ -160,6 +147,7 @@ class Tree < Node
         elsif node.read < value
             self.find(value, node.right_child)
         end
+    end
         
 
     end
@@ -234,6 +222,7 @@ class Tree < Node
         node = self.find(node_value)    
         @height = 0 unless @height
         @height = 0 if @reset == 1
+        if node
         unless node.left_child || node.right_child
             @reset = 0
             return @height if @height == 0
@@ -258,7 +247,7 @@ class Tree < Node
             else
                 self.height(rc.read)
             end
-            
+        end
         end
         @reset = 1
         @height
@@ -282,32 +271,37 @@ class Tree < Node
         
     end
 
-    def balanced?(node = @base_root)#difference between heights of left subtree and 
-                #right subtree of every node is not more than 1.
-    if node.left_child
-        left_height = self.height(node.left_child.read) 
-    else 
-        left_height = 0 
+    def balanced?(node = @base_root)
+        left_height = 0
+        right_height = 0
+        if node.left_child
+            while node.left_child
+                node = node.left_child
+                left_height += 1
+            end
+        end
+        if node.right_child
+            while node.right_child
+                node = node.right_child
+                right_height += 1
+            end
+        end
+        #lets say lh is 3 and rh is 1
+        if left_height - right_height > 1 || right_height - left_height > 1
+            return nil
+        else
+            return true
+        end
+        
     end
-    if node.right_child
-     right_height = self.height(node.right_child.read) 
-    else
-        right_height = 0 
-    end
-     if right_height - left_height > 1 || right_height - left_height < 0
-        return nil
-     else 
-        return true
-    end
-    balanced?(node.left_child) if node.left_child
-    balanced?(node.right_child) if node.right_child
-end
 
     def rebalance #rebalance if the tree is unbalanced. read every node into a new array, then build new tree
         unless self.balanced?
             @inorder_list = []
             self.inorder
+            @base_root = nil
             self.build_tree(@inorder_list)
+            @inorder_list = nil
         end
     end
 
@@ -316,15 +310,16 @@ end
 
 tree = Tree.new([1,2,3,4,5,6,7,8,9,10])
 tree.build_tree
-#print tree.find(3)
-#tree.delete(2)
-#print tree.find(3)  #should return data: 3, lc: 1, rc: 5 after i properly delete 2
+#print tree.find(6)
+tree.delete(9)
+#print tree.find(4)
 #print tree.inorder
 #print tree.postorder
 #print tree.preorder
 #print tree.level_order
 #print tree.height(6)
-#print tree.height(9)
+#print tree.height(10)
 #print tree.depth(1)
 #print tree.balanced?
-#print tree.find(10)
+tree.rebalance
+
